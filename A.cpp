@@ -2,8 +2,8 @@
 #include <iostream>
 #include <vector>
 
-void Merge(std::vector<std::pair<int, int>> left,
-           std::vector<std::pair<int, int>> right,
+void Merge(std::vector<std::pair<int, int>>& left,
+           std::vector<std::pair<int, int>>& right,
            std::vector<std::pair<int, int>>& vec) {
   int left_size = left.size();
   int right_size = right.size();
