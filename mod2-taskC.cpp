@@ -2,210 +2,237 @@
 #include <string>
 #include <vector>
 
-struct MinHeap {
-  std::vector<int> heap;
-  void ExtractMin() {
-    std::swap(heap[0], heap[heap.size() - 1]);
-    heap.pop_back();
-    SiftDown(0);
-  }
+class MinHeap {
+ public:
+  void ExtractMin();
+  int64_t GetMin() { return heap_[0]; }
+  int64_t GetSize() { return heap_.size(); }
+  void Insert(int64_t value);
 
-  int GetMin() { return heap[0]; }
-
-  void Add(long long value) {
-    heap.push_back(value);
-    SiftUp(heap.size() - 1);
-  }
-
-  void SiftDown(int index) {
-    int size = heap.size();
-    if (2 * index > size - 1) {
-      return;
-    }
-    int u = 2 * index;
-    if (u + 1 < size && heap[u + 1] < heap[u]) {
-      ++u;
-    }
-    if (heap[index] > heap[u]) {
-      std::swap(heap[u], heap[index]);
-      SiftDown(u);
-    }
-  }
-  void SiftUp(int index) {
-    if (index == 0) {
-      return;
-    }
-    int p = index / 2;
-    if (heap[p] > heap[index]) {
-      std::swap(heap[p], heap[index]);
-      return SiftUp(p);
-    }
-  }
+ private:
+  std::vector<int64_t> heap_;
+  void SiftDown(int64_t index);
+  void SiftUp(int64_t index);
 };
 
-struct MaxHeap {
-  std::vector<int> heap;
-  void ExtractMax() {
-    std::swap(heap[0], heap[heap.size() - 1]);
-    heap.pop_back();
-    SiftDown(0);
-  }
+void MinHeap::ExtractMin() {
+  std::swap(heap_[0], heap_[heap_.size() - 1]);
+  heap_.pop_back();
+  SiftDown(0);
+}
 
-  int GetMax() { return heap[0]; }
+void MinHeap::Insert(int64_t value) {
+  heap_.push_back(value);
+  SiftUp(heap_.size() - 1);
+}
 
-  void Add(long long value) {
-    heap.push_back(value);
-    SiftUp(heap.size() - 1);
+void MinHeap::SiftDown(int64_t index) {
+  int64_t size = heap_.size();
+  if (2 * index > size - 1) {
+    return;
   }
+  int u = 2 * index;
+  if (u + 1 < size && heap_[u + 1] < heap_[u]) {
+    ++u;
+  }
+  if (heap_[index] > heap_[u]) {
+    std::swap(heap_[u], heap_[index]);
+    SiftDown(u);
+  }
+}
 
-  void SiftDown(int index) {
-    int size = heap.size();
-    if (2 * index > size - 1) {
-      return;
-    }
-    int u = 2 * index;
-    if (u + 1 < size && heap[u + 1] > heap[u]) {
-      ++u;
-    }
-    if (heap[index] < heap[u]) {
-      std::swap(heap[u], heap[index]);
-      SiftDown(u);
-    }
+void MinHeap::SiftUp(int64_t index) {
+  if (index == 0) {
+    return;
   }
-  void SiftUp(int index) {
-    if (index == 0) {
-      return;
-    }
-    int p = index / 2;
-    if (heap[p] < heap[index]) {
-      std::swap(heap[p], heap[index]);
-      return SiftUp(p);
-    }
+  int64_t p = index / 2;
+  if (heap_[p] > heap_[index]) {
+    std::swap(heap_[p], heap_[index]);
+    return SiftUp(p);
   }
+}
+
+class MaxHeap {
+ public:
+  void ExtractMax();
+  int64_t GetMax() { return heap_[0]; }
+  int64_t GetSize() { return heap_.size(); }
+  void Insert(int64_t value);
+
+ private:
+  std::vector<int> heap_;
+  void SiftDown(int64_t index);
+  void SiftUp(int64_t index);
 };
 
-struct MinMaxHeap {
-  MinHeap min_heap;
-  MaxHeap max_heap;
-  MinHeap min_delete;
-  MaxHeap max_delete;
-  int size = 0;
+void MaxHeap::ExtractMax() {
+  std::swap(heap_[0], heap_[heap_.size() - 1]);
+  heap_.pop_back();
+  SiftDown(0);
+}
 
-  void Insert(long long value) {
-    min_heap.Add(value);
-    max_heap.Add(value);
-    std::cout << "ok\n";
-    ++size;
-  }
+void MaxHeap::Insert(int64_t value) {
+  heap_.push_back(value);
+  SiftUp(heap_.size() - 1);
+}
 
-  void Size() const { std::cout << size << "\n"; }
+void MaxHeap::SiftDown(int64_t index) {
+  int64_t size = heap_.size();
+  if (2 * index > size - 1) {
+    return;
+  }
+  int64_t u = 2 * index;
+  if (u + 1 < size && heap_[u + 1] > heap_[u]) {
+    ++u;
+  }
+  if (heap_[index] < heap_[u]) {
+    std::swap(heap_[u], heap_[index]);
+    SiftDown(u);
+  }
+}
 
-  void DeleteMin() {
-    if (size == 0) {
-      std::cout << "error\n";
-    } else {
-      while (!min_heap.heap.empty() && !min_delete.heap.empty()) {
-        if (min_heap.GetMin() == min_delete.GetMin()) {
-          min_heap.ExtractMin();
-          min_delete.ExtractMin();
-        } else {
-          break;
-        }
-      }
-      std::cout << min_heap.GetMin() << "\n";
-      max_delete.Add(min_heap.GetMin());
-      min_heap.ExtractMin();
-      --size;
-    }
+void MaxHeap::SiftUp(int64_t index) {
+  if (index == 0) {
+    return;
   }
+  int64_t p = index / 2;
+  if (heap_[p] < heap_[index]) {
+    std::swap(heap_[p], heap_[index]);
+    return SiftUp(p);
+  }
+}
 
-  void PrintMin() {
-    if (size == 0) {
-      std::cout << "error\n";
-    } else {
-      while (!min_heap.heap.empty() && !min_delete.heap.empty()) {
-        if (min_heap.GetMin() == min_delete.GetMin()) {
-          min_heap.ExtractMin();
-          min_delete.ExtractMin();
-        } else {
-          break;
-        }
-      }
-      std::cout << min_heap.GetMin() << "\n";
-    }
-  }
+class MinMaxHeap {
+ public:
+  void Insert(int64_t value);
+  size_t Size() const { return size_; }
+  void ExtractMin();
+  void GetMin();
+  void ExtractMax();
+  void GetMax();
+  void Clear();
 
-  void PrintMax() {
-    if (size == 0) {
-      std::cout << "error\n";
-    } else {
-      while (!max_heap.heap.empty() && !max_delete.heap.empty()) {
-        if (max_heap.GetMax() == max_delete.GetMax()) {
-          max_heap.ExtractMax();
-          max_delete.ExtractMax();
-        } else {
-          break;
-        }
-      }
-      std::cout << max_heap.GetMax() << "\n";
-    }
-  }
-
-  void Clear() {
-    while (!max_heap.heap.empty()) {
-      max_heap.ExtractMax();
-    }
-    while (!min_delete.heap.empty()) {
-      min_delete.ExtractMin();
-    }
-    while (!min_heap.heap.empty()) {
-      min_heap.ExtractMin();
-    }
-    while (!max_delete.heap.empty()) {
-      max_delete.ExtractMax();
-    }
-    size = 0;
-    std::cout << "ok\n";
-  }
-  void DeleteMax() {
-    if (size == 0) {
-      std::cout << "error\n";
-    } else {
-      while (!max_heap.heap.empty() && !max_delete.heap.empty()) {
-        if (max_heap.GetMax() == max_delete.GetMax()) {
-          max_heap.ExtractMax();
-          max_delete.ExtractMax();
-        } else {
-          break;
-        }
-      }
-      min_delete.Add(max_heap.GetMax());
-      std::cout << max_heap.GetMax() << "\n";
-      max_heap.ExtractMax();
-      --size;
-    }
-  }
+ private:
+  MinHeap min_heap_;
+  MaxHeap max_heap_;
+  MinHeap min_delete_;
+  MaxHeap max_delete_;
+  size_t size_ = 0;
 };
 
-void PrintSolution(MinMaxHeap& heap) {
+void MinMaxHeap::Insert(int64_t value) {
+  min_heap_.Insert(value);
+  max_heap_.Insert(value);
+  ++size_;
+}
+
+void MinMaxHeap::ExtractMin() {
+  if (size_ == 0) {
+    std::cout << "error\n";
+  } else {
+    while (min_heap_.GetSize() != 0 && min_delete_.GetSize() != 0) {
+      if (min_heap_.GetMin() == min_delete_.GetMin()) {
+        min_heap_.ExtractMin();
+        min_delete_.ExtractMin();
+      } else {
+        break;
+      }
+    }
+    std::cout << min_heap_.GetMin() << "\n";
+    max_delete_.Insert(min_heap_.GetMin());
+    min_heap_.ExtractMin();
+    --size_;
+  }
+}
+
+void MinMaxHeap::GetMin() {
+  if (size_ == 0) {
+    std::cout << "error\n";
+  } else {
+    while (min_heap_.GetSize() != 0 && min_delete_.GetSize() != 0) {
+      if (min_heap_.GetMin() == min_delete_.GetMin()) {
+        min_heap_.ExtractMin();
+        min_delete_.ExtractMin();
+      } else {
+        break;
+      }
+    }
+    std::cout << min_heap_.GetMin() << "\n";
+  }
+}
+
+void MinMaxHeap::ExtractMax() {
+  if (size_ == 0) {
+    std::cout << "error\n";
+  } else {
+    while (max_heap_.GetSize() != 0 && max_delete_.GetSize() != 0) {
+      if (max_heap_.GetMax() == max_delete_.GetMax()) {
+        max_heap_.ExtractMax();
+        max_delete_.ExtractMax();
+      } else {
+        break;
+      }
+    }
+    min_delete_.Insert(max_heap_.GetMax());
+    std::cout << max_heap_.GetMax() << "\n";
+    max_heap_.ExtractMax();
+    --size_;
+  }
+}
+
+void MinMaxHeap::GetMax() {
+  if (size_ == 0) {
+    std::cout << "error\n";
+  } else {
+    while (max_heap_.GetSize() != 0 && max_delete_.GetSize() != 0) {
+      if (max_heap_.GetMax() == max_delete_.GetMax()) {
+        max_heap_.ExtractMax();
+        max_delete_.ExtractMax();
+      } else {
+        break;
+      }
+    }
+    std::cout << max_heap_.GetMax() << "\n";
+  }
+}
+
+void MinMaxHeap::Clear() {
+  while (max_heap_.GetSize() != 0) {
+    max_heap_.ExtractMax();
+  }
+  while (min_delete_.GetSize() != 0) {
+    min_delete_.ExtractMin();
+  }
+  while (min_heap_.GetSize() != 0) {
+    min_heap_.ExtractMin();
+  }
+  while (max_delete_.GetSize() != 0) {
+    max_delete_.ExtractMax();
+  }
+  size_ = 0;
+}
+
+void ProcessTheRequest(MinMaxHeap& heap) {
   std::string tmp;
   std::cin >> tmp;
   if (tmp == "insert") {
-    long long x;
+    int64_t x;
     std::cin >> x;
     heap.Insert(x);
+    std::cout << "ok\n";
   } else if (tmp == "get_min") {
-    heap.PrintMin();
+    heap.GetMin();
   } else if (tmp == "extract_min") {
-    heap.DeleteMin();
+    heap.ExtractMin();
   } else if (tmp == "extract_max") {
-    heap.DeleteMax();
+    heap.ExtractMax();
   } else if (tmp == "get_max") {
-    heap.PrintMax();
+    heap.GetMax();
   } else if (tmp == "size") {
-    heap.Size();
+    std::cout << heap.Size() << '\n';
   } else if (tmp == "clear") {
     heap.Clear();
+    std::cout << "ok\n";
   }
 }
 
@@ -214,6 +241,6 @@ int main() {
   int q;
   std::cin >> q;
   for (int i = 0; i < q; ++i) {
-    PrintSolution(heap);
+    ProcessTheRequest(heap);
   }
 }
