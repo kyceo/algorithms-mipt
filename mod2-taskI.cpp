@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-void PrintSolution(std::deque<int>& dq) {
+void ProcessTheRequest(std::deque<int>& dq) {
   std::string query;
   std::cin >> query;
   if (query == "+") {
@@ -25,6 +25,6 @@ int main() {
   int n;
   std::cin >> n;
   for (int i = 0; i < n; ++i) {
-    PrintSolution(dq);
+    ProcessTheRequest(dq);
   }
 }
