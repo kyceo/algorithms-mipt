@@ -8,7 +8,7 @@ class Heap {
  public:
   void ExtractMin();
   void DecreaseKey(int query_index, int64_t delta);
-  int64_t GetMin() { return heap_[0].first; }
+  int64_t GetMin() const { return heap_[0].first; }
   void Insert(int64_t value, size_t index);
 
  private:
@@ -66,7 +66,7 @@ void Heap::SiftUp(int index) {
   }
 }
 
-void ProcessTheRequest(Heap& heap, std::string& tmp, size_t index) {
+void ProcessTheRequest(Heap& heap, const std::string& tmp, size_t index) {
   if (tmp == "insert") {
     int64_t x;
     std::cin >> x;
