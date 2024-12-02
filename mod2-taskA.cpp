@@ -1,86 +1,94 @@
 #include <iostream>
 #include <string>
 #include <vector>
-int j = 0;
 
-struct Heap {
-  std::vector<std::pair<long long, long long>> heap;
-  static const int cInf = 1e6;
-  long long queries[cInf];
-  void ExtractMin() {
-    std::swap(queries[heap[0].second], queries[heap[heap.size() - 1].second]);
-    std::swap(heap[0], heap[heap.size() - 1]);
-    heap.pop_back();
-    SiftDown(0);
-  }
+const int cInf = 1e6;
 
-  void DecreaseKey(int query_index, long long delta) {
-    --query_index;
-    heap[queries[query_index]].first -= delta;
-    SiftUp(queries[query_index]);
-  }
+class Heap {
+ public:
+  void ExtractMin();
+  void DecreaseKey(int query_index, int64_t delta);
+  int64_t GetMin() { return heap_[0].first; }
+  void Insert(int64_t value, size_t index);
 
-  void GetMin() { std::cout << heap[0].first << '\n'; }
+ private:
+  void SiftUp(int index);
+  void SiftDown(int index);
 
-  void Insert(long long value) {
-    heap.push_back({value, j});
-    queries[j] = heap.size() - 1;
-    SiftUp(heap.size() - 1);
-  }
-
-  void SiftDown(int index) {
-    int size = heap.size();
-    if (2 * index > size - 1) {
-      return;
-    }
-    int u = 2 * index;
-    if (u + 1 < size && heap[u + 1].first < heap[u].first) {
-      ++u;
-    }
-    if (heap[index].first > heap[u].first) {
-      std::swap(queries[heap[u].second], queries[heap[index].second]);
-      std::swap(heap[u], heap[index]);
-      SiftDown(u);
-    }
-  }
-  void SiftUp(int index) {
-    if (index == 0) {
-      return;
-    }
-    int p = index / 2;
-    if (heap[p].first > heap[index].first) {
-      std::swap(queries[heap[p].second], queries[heap[index].second]);
-      std::swap(heap[p], heap[index]);
-      return SiftUp(p);
-    }
-  }
+  std::vector<std::pair<int64_t, int64_t>> heap_;
+  int64_t queries_[cInf];
 };
 
-void PrintSolution(Heap& heap, std::string tmp) {
+void Heap::ExtractMin() {
+  std::swap(queries_[heap_[0].second],
+            queries_[heap_[heap_.size() - 1].second]);
+  std::swap(heap_[0], heap_[heap_.size() - 1]);
+  heap_.pop_back();
+  SiftDown(0);
+}
+
+void Heap::DecreaseKey(int query_index, int64_t delta) {
+  --query_index;
+  heap_[queries_[query_index]].first -= delta;
+  SiftUp(queries_[query_index]);
+}
+
+void Heap::Insert(int64_t value, size_t index) {
+  heap_.push_back({value, index});
+  queries_[index] = heap_.size() - 1;
+  SiftUp(heap_.size() - 1);
+}
+
+void Heap::SiftDown(int index) {
+  int size = heap_.size();
+  if (2 * index > size - 1) {
+    return;
+  }
+  int u = 2 * index;
+  if (u + 1 < size && heap_[u + 1].first < heap_[u].first) {
+    ++u;
+  }
+  if (heap_[index].first > heap_[u].first) {
+    std::swap(queries_[heap_[u].second], queries_[heap_[index].second]);
+    std::swap(heap_[u], heap_[index]);
+    SiftDown(u);
+  }
+}
+void Heap::SiftUp(int index) {
+  if (index == 0) {
+    return;
+  }
+  int p = index / 2;
+  if (heap_[p].first > heap_[index].first) {
+    std::swap(queries_[heap_[p].second], queries_[heap_[index].second]);
+    std::swap(heap_[p], heap_[index]);
+    return SiftUp(p);
+  }
+}
+
+void ProcessTheRequest(Heap& heap, std::string& tmp, size_t index) {
   if (tmp == "insert") {
-    long long x;
+    int64_t x;
     std::cin >> x;
-    heap.Insert(x);
+    heap.Insert(x, index);
   } else if (tmp == "getMin") {
-    heap.GetMin();
+    std::cout << heap.GetMin() << '\n';
   } else if (tmp == "extractMin") {
     heap.ExtractMin();
   } else if (tmp == "decreaseKey") {
     int query_index;
-    long long delta;
+    int64_t delta;
     std::cin >> query_index >> delta;
     heap.DecreaseKey(query_index, delta);
   }
-  ++j;
 }
-
 int main() {
-  int q;
+  size_t q;
   std::cin >> q;
   std::string tmp;
   Heap heap;
-  for (int i = 0; i < q; ++i) {
+  for (size_t index = 0; index < q; ++index) {
     std::cin >> tmp;
-    PrintSolution(heap, tmp);
+    ProcessTheRequest(heap, tmp, index);
   }
 }
