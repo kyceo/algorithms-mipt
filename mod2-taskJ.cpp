@@ -1,10 +1,13 @@
+// необходимо реализовать структуру данных, которая обрабатывает запросы вида:
+// enqueue, dequeue, front, clear, size, min
+
 #include <algorithm>
 #include <iostream>
 #include <stack>
 
 const int cInf = 1e9 + 2;
 
-class Stack {
+class MinStack {
  public:
   void Push(int64_t value);
   void Pop() { stack_.pop(); }
@@ -17,7 +20,7 @@ class Stack {
   std::stack<std::pair<int64_t, int64_t>> stack_;
 };
 
-void Stack::Push(int64_t value) {
+void MinStack::Push(int64_t value) {
   if (!stack_.empty()) {
     stack_.push({value, std::min(value, stack_.top().second)});
   } else {
@@ -25,27 +28,27 @@ void Stack::Push(int64_t value) {
   }
 }
 
-int64_t Stack::GetTop() {
+int64_t MinStack::GetTop() {
   if (stack_.empty()) {
     return cInf;
   }
   return stack_.top().first;
 }
 
-int64_t Stack::GetMin() {
+int64_t MinStack::GetMin() {
   if (stack_.empty()) {
     return cInf;
   }
   return stack_.top().second;
 }
 
-void Stack::Clear() {
+void MinStack::Clear() {
   while (!stack_.empty()) {
     stack_.pop();
   }
 }
 
-class Queue {
+class MinQueue {
  public:
   void Enqueue(int64_t value);
   void Dequeue();
@@ -55,17 +58,17 @@ class Queue {
   size_t GetSize() const { return size_; };
 
  private:
-  Stack back_;
-  Stack front_;
+  MinStack back_;
+  MinStack front_;
   size_t size_ = 0;
 };
 
-void Queue::Enqueue(int64_t value) {
+void MinQueue::Enqueue(int64_t value) {
   back_.Push(value);
   ++size_;
 }
 
-void Queue::Dequeue() {
+void MinQueue::Dequeue() {
   if (front_.GetSize() == 0) {
     while (back_.GetSize() != 0) {
       front_.Push(back_.GetTop());
@@ -81,7 +84,7 @@ void Queue::Dequeue() {
   }
 }
 
-int64_t Queue::GetFront() {
+int64_t MinQueue::GetFront() {
   if (front_.GetSize() == 0) {
     while (back_.GetSize() != 0) {
       front_.Push(back_.GetTop());
@@ -91,13 +94,13 @@ int64_t Queue::GetFront() {
   return front_.GetTop();
 }
 
-void Queue::Clear() {
+void MinQueue::Clear() {
   front_.Clear();
   back_.Clear();
   size_ = 0;
 }
 
-void ProcessTheRequest(Queue& queue) {
+void ProcessTheRequest(MinQueue& queue) {
   std::string tmp;
   std::cin >> tmp;
   if (tmp == "enqueue") {
@@ -129,7 +132,7 @@ void ProcessTheRequest(Queue& queue) {
   }
 }
 int main() {
-  Queue queue;
+  MinQueue queue;
   int n;
   std::cin >> n;
   for (int i = 0; i < n; ++i) {
