@@ -1,3 +1,6 @@
+// реализовать структуру данных, которая поддерживает операции insert,
+// extract_min, get_min extract_max, get_max, size, clear
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -5,8 +8,8 @@
 class MinHeap {
  public:
   void ExtractMin();
-  int64_t GetMin() { return heap_[0]; }
-  int64_t GetSize() { return heap_.size(); }
+  int64_t GetMin() const { return heap_[0]; }
+  int64_t GetSize() const { return heap_.size(); }
   void Insert(int64_t value);
 
  private:
@@ -31,13 +34,13 @@ void MinHeap::SiftDown(int64_t index) {
   if (2 * index > size - 1) {
     return;
   }
-  int u = 2 * index;
-  if (u + 1 < size && heap_[u + 1] < heap_[u]) {
-    ++u;
+  int child = 2 * index;
+  if (child + 1 < size && heap_[child + 1] < heap_[child]) {
+    ++child;
   }
-  if (heap_[index] > heap_[u]) {
-    std::swap(heap_[u], heap_[index]);
-    SiftDown(u);
+  if (heap_[index] > heap_[child]) {
+    std::swap(heap_[child], heap_[index]);
+    SiftDown(child);
   }
 }
 
@@ -45,18 +48,18 @@ void MinHeap::SiftUp(int64_t index) {
   if (index == 0) {
     return;
   }
-  int64_t p = index / 2;
-  if (heap_[p] > heap_[index]) {
-    std::swap(heap_[p], heap_[index]);
-    return SiftUp(p);
+  int64_t parent = index / 2;
+  if (heap_[parent] > heap_[index]) {
+    std::swap(heap_[parent], heap_[index]);
+    return SiftUp(parent);
   }
 }
 
 class MaxHeap {
  public:
   void ExtractMax();
-  int64_t GetMax() { return heap_[0]; }
-  int64_t GetSize() { return heap_.size(); }
+  int64_t GetMax() const { return heap_[0]; }
+  int64_t GetSize() const { return heap_.size(); }
   void Insert(int64_t value);
 
  private:
@@ -81,13 +84,13 @@ void MaxHeap::SiftDown(int64_t index) {
   if (2 * index > size - 1) {
     return;
   }
-  int64_t u = 2 * index;
-  if (u + 1 < size && heap_[u + 1] > heap_[u]) {
-    ++u;
+  int64_t child = 2 * index;
+  if (child + 1 < size && heap_[child + 1] > heap_[child]) {
+    ++child;
   }
-  if (heap_[index] < heap_[u]) {
-    std::swap(heap_[u], heap_[index]);
-    SiftDown(u);
+  if (heap_[index] < heap_[child]) {
+    std::swap(heap_[child], heap_[index]);
+    SiftDown(child);
   }
 }
 
@@ -95,10 +98,10 @@ void MaxHeap::SiftUp(int64_t index) {
   if (index == 0) {
     return;
   }
-  int64_t p = index / 2;
-  if (heap_[p] < heap_[index]) {
-    std::swap(heap_[p], heap_[index]);
-    return SiftUp(p);
+  int64_t parent = index / 2;
+  if (heap_[parent] < heap_[index]) {
+    std::swap(heap_[parent], heap_[index]);
+    return SiftUp(parent);
   }
 }
 
