@@ -13,13 +13,20 @@ struct Point {
 };
 
 const long long cInf = 1e9;
+
 namespace Detail {
+bool CompareByY(const Point& first, const Point& second) {
+  return first.y != second.y ? first.y < second.y : first.x < second.x;
+}
+
+bool CompareByX(const Point& first, const Point& second) {
+  return first.x != second.x ? first.x < second.x : first.y < second.y;
+}
+
 long long F(long long x) { return x & (x + 1); }
+
 long long G(long long x) { return x | (x + 1); }
 }  // namespace Detail
-using namespace Detail;
-
-class FenwickFenwick;
 
 class Fenwick {
  public:
@@ -27,24 +34,23 @@ class Fenwick {
   void Update(const Point& point, long long weight);
   Fenwick() : tree_(0), points_(0) {}
   Fenwick(const std::vector<Point>& vec);
+  const std::vector<Point>& GetPoints() const { return points_; }
 
  private:
-  friend FenwickFenwick;
   std::vector<long long> tree_;
   std::vector<Point> points_;
-  static bool Comp(const Point& first, const Point& second);
 };
 
 Fenwick::Fenwick(const std::vector<Point>& vec)
     : tree_(vec.size()), points_(vec) {
-  std::sort(points_.begin(), points_.end(), Comp);
+  std::sort(points_.begin(), points_.end(), Detail::CompareByY);
   std::vector<long long> weights;
   for (size_t i = 0; i < points_.size(); ++i) {
     weights.push_back(points_[i].weight);
   }
   for (size_t i = 0; i < weights.size(); ++i) {
     tree_[i] = 0;
-    for (size_t j = F(i); j < i + 1; ++j) {
+    for (size_t j = Detail::F(i); j < i + 1; ++j) {
       tree_[i] += weights[j];
     }
   }
@@ -52,24 +58,21 @@ Fenwick::Fenwick(const std::vector<Point>& vec)
 
 long long Fenwick::GetPrefixSum(size_t r) const {
   long long sum = 0;
-  for (long long i = r; i >= 0; i = F(i) - 1) {
+  for (long long i = r; i >= 0; i = Detail::F(i) - 1) {
     sum += tree_[i];
   }
   return sum;
 }
 
 void Fenwick::Update(const Point& point, long long weight) {
-  size_t pos = std::lower_bound(points_.begin(), points_.end(), point, Comp) -
+  size_t pos = std::lower_bound(points_.begin(), points_.end(), point,
+                                Detail::CompareByY) -
                points_.begin();
   long long delta = weight - points_[pos].weight;
   points_[pos].weight += delta;
-  for (size_t i = pos; i < tree_.size(); i = G(i)) {
+  for (size_t i = pos; i < tree_.size(); i = Detail::G(i)) {
     tree_[i] += delta;
   }
-}
-
-bool Fenwick::Comp(const Point& first, const Point& second) {
-  return first.y != second.y ? first.y < second.y : first.x < second.x;
 }
 
 class FenwickFenwick {
@@ -81,15 +84,14 @@ class FenwickFenwick {
  private:
   std::vector<Fenwick> trees_;
   std::vector<Point> points_;
-  static bool Comp(const Point& first, const Point& second);
 };
 
 FenwickFenwick::FenwickFenwick(const std::vector<Point>& vec)
     : trees_(vec.size()), points_(vec) {
-  std::sort(points_.begin(), points_.end(), Comp);
+  std::sort(points_.begin(), points_.end(), Detail::CompareByX);
   for (size_t i = 0; i < points_.size(); ++i) {
     std::vector<Point> subvec;
-    for (size_t j = F(i); j < i + 1; ++j) {
+    for (size_t j = Detail::F(i); j < i + 1; ++j) {
       subvec.push_back(points_[j]);
     }
     trees_[i] = Fenwick(subvec);
@@ -98,18 +100,18 @@ FenwickFenwick::FenwickFenwick(const std::vector<Point>& vec)
 
 long long FenwickFenwick::GetRectangleSum(const Point& point) const {
   size_t i = std::upper_bound(points_.begin(), points_.end(),
-                              Point{point.x, cInf}, Comp) -
+                              Point{point.x, cInf}, Detail::CompareByX) -
              points_.begin();
   if (i == 0) {
     return 0;
   }
   --i;
   long long sum = 0;
-  for (long long k = i; k >= 0; k = F(k) - 1) {
-    size_t j =
-        std::upper_bound(trees_[k].points_.begin(), trees_[k].points_.end(),
-                         Point{cInf, point.y}, Fenwick::Comp) -
-        trees_[k].points_.begin();
+  for (long long k = i; k >= 0; k = Detail::F(k) - 1) {
+    size_t j = std::upper_bound(trees_[k].GetPoints().begin(),
+                                trees_[k].GetPoints().end(),
+                                Point{cInf, point.y}, Detail::CompareByY) -
+               trees_[k].GetPoints().begin();
     if (j == 0) {
       continue;
     }
@@ -120,15 +122,12 @@ long long FenwickFenwick::GetRectangleSum(const Point& point) const {
 }
 
 void FenwickFenwick::Update(const Point& point, long long value) {
-  size_t i = std::lower_bound(points_.begin(), points_.end(), point, Comp) -
+  size_t i = std::lower_bound(points_.begin(), points_.end(), point,
+                              Detail::CompareByX) -
              points_.begin();
-  for (size_t j = i; j < trees_.size(); j = G(j)) {
+  for (size_t j = i; j < trees_.size(); j = Detail::G(j)) {
     trees_[j].Update(point, value);
   }
-}
-
-bool FenwickFenwick::Comp(const Point& first, const Point& second) {
-  return first.x != second.x ? first.x < second.x : first.y < second.y;
 }
 
 void ProcessTheQuery(FenwickFenwick& fft, std::vector<Point>& points) {
