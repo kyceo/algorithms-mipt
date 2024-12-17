@@ -1,3 +1,6 @@
+// в этой задаче надо реализовать структуру, которая будет отвечать на запросы
+// lowerbound, insert за O(logn)
+
 #include <algorithm>
 #include <iostream>
 #include <vector>
