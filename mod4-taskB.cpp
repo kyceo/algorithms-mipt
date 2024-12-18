@@ -17,7 +17,7 @@ class Set {
 
  private:
   struct Node {
-    static size_t GetDepth(Node* node);
+    static size_t GetDepth(const Node* node);
     int64_t GetDelta() const;
     void UpdateDepth();
     void TurnRight();
@@ -39,10 +39,10 @@ class Set {
 
   Node* root_;
   void Insert(Node*& node, int64_t value);
-  int64_t LowerBound(Node* node, int64_t value) const;
+  int64_t LowerBound(const Node* node, int64_t value) const;
 };
 
-size_t Set::Node::GetDepth(Node* node) {
+size_t Set::Node::GetDepth(const Node* node) {
   if (node == nullptr) {
     return 0;
   }
@@ -110,7 +110,7 @@ void Set::Insert(Node*& node, int64_t value) {
   node->Balance();
 }
 
-int64_t Set::LowerBound(Node* node, int64_t value) const {
+int64_t Set::LowerBound(const Node* node, int64_t value) const {
   if (node == nullptr) {
     return -1;
   }
