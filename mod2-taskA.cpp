@@ -1,3 +1,5 @@
+// в этой задаче необходимо реализовать бинарную кучу
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -44,25 +46,25 @@ void Heap::SiftDown(int index) {
   if (2 * index > size - 1) {
     return;
   }
-  int u = 2 * index;
-  if (u + 1 < size && heap_[u + 1].first < heap_[u].first) {
-    ++u;
+  int child = 2 * index;
+  if (child + 1 < size && heap_[child + 1].first < heap_[child].first) {
+    ++child;
   }
-  if (heap_[index].first > heap_[u].first) {
-    std::swap(queries_[heap_[u].second], queries_[heap_[index].second]);
-    std::swap(heap_[u], heap_[index]);
-    SiftDown(u);
+  if (heap_[index].first > heap_[child].first) {
+    std::swap(queries_[heap_[child].second], queries_[heap_[index].second]);
+    std::swap(heap_[child], heap_[index]);
+    SiftDown(child);
   }
 }
 void Heap::SiftUp(int index) {
   if (index == 0) {
     return;
   }
-  int p = index / 2;
-  if (heap_[p].first > heap_[index].first) {
-    std::swap(queries_[heap_[p].second], queries_[heap_[index].second]);
-    std::swap(heap_[p], heap_[index]);
-    return SiftUp(p);
+  int parent = index / 2;
+  if (heap_[parent].first > heap_[index].first) {
+    std::swap(queries_[heap_[parent].second], queries_[heap_[index].second]);
+    std::swap(heap_[parent], heap_[index]);
+    return SiftUp(parent);
   }
 }
 
