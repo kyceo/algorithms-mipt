@@ -17,15 +17,15 @@ class Set {
 
  private:
   struct Node {
-    static int64_t GetDepth(Node*& node);
-    int64_t GetDelta();
+    static size_t GetDepth(Node* node);
+    int64_t GetDelta() const;
     void UpdateDepth();
     void TurnRight();
     void TurnLeft();
     void Balance();
 
     int64_t value;
-    int64_t depth;
+    size_t depth;
     Node* left;
     Node* right;
 
@@ -39,17 +39,17 @@ class Set {
 
   Node* root_;
   void Insert(Node*& node, int64_t value);
-  int64_t LowerBound(Node*& node, int64_t value);
+  int64_t LowerBound(Node* node, int64_t value) const;
 };
 
-int64_t Set::Node::GetDepth(Node*& node) {
+size_t Set::Node::GetDepth(Node* node) {
   if (node == nullptr) {
     return 0;
   }
   return node->depth;
 }
 
-int64_t Set::Node::GetDelta() { return GetDepth(left) - GetDepth(right); }
+int64_t Set::Node::GetDelta() const { return GetDepth(left) - GetDepth(right); }
 
 void Set::Node::UpdateDepth() {
   depth = std::max(GetDepth(left), GetDepth(right)) + 1;
@@ -94,10 +94,6 @@ void Set::Node::Balance() {
 }
 
 void Set::Insert(Node*& node, int64_t value) {
-  if (root_ == nullptr) {
-    root_ = new Node(value);
-    return;
-  }
   if (node == nullptr) {
     node = new Node(value);
     return;
@@ -114,7 +110,7 @@ void Set::Insert(Node*& node, int64_t value) {
   node->Balance();
 }
 
-int64_t Set::LowerBound(Node*& node, int64_t value) {
+int64_t Set::LowerBound(Node* node, int64_t value) const {
   if (node == nullptr) {
     return -1;
   }
