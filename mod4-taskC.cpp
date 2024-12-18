@@ -15,8 +15,8 @@ class Map {
 
  private:
   struct Node {
-    static int64_t GetDepth(Node*& node);
-    int64_t GetDelta();
+    static size_t GetDepth(Node* node);
+    int64_t GetDelta() const;
     void UpdateDepth();
     void TurnRight();
     void TurnLeft();
@@ -24,7 +24,7 @@ class Map {
 
     std::string key;
     std::string value;
-    int64_t depth;
+    size_t depth;
     Node* left;
     Node* right;
 
@@ -37,19 +37,19 @@ class Map {
   };
 
   void Insert(Node*& node, std::string key, std::string value);
-  bool IsPresent(Node*& node, std::string key);
-  std::string LowerBound(Node*& node, std::string key);
+  bool IsPresent(Node* node, std::string key) const;
+  std::string LowerBound(Node* node, std::string key) const;
   Node* root_;
 };
 
-int64_t Map::Node::GetDepth(Node*& node) {
+size_t Map::Node::GetDepth(Node* node) {
   if (node == nullptr) {
     return 0;
   }
   return node->depth;
 }
 
-int64_t Map::Node::GetDelta() { return GetDepth(left) - GetDepth(right); }
+int64_t Map::Node::GetDelta() const { return GetDepth(left) - GetDepth(right); }
 
 void Map::Node::UpdateDepth() {
   depth = std::max(GetDepth(left), GetDepth(right)) + 1;
@@ -116,7 +116,7 @@ void Map::Insert(Node*& node, std::string key, std::string value) {
   node->Balance();
 }
 
-bool Map::IsPresent(Node*& node, std::string key) {
+bool Map::IsPresent(Node* node, std::string key) const {
   if (node == nullptr) {
     return false;
   }
@@ -129,7 +129,7 @@ bool Map::IsPresent(Node*& node, std::string key) {
   return IsPresent(node->right, key);
 }
 
-std::string Map::LowerBound(Node*& node, std::string key) {
+std::string Map::LowerBound(Node* node, std::string key) const {
   if (node == nullptr) {
     return " ";
   }
